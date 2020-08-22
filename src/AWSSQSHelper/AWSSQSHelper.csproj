@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Authors>Kevin Brashears</Authors>
+    <Company>kbrashears5</Company>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/kbrashears5/net-standard-aws-sqs-helper</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/kbrashears5/net-standard-aws-sqs-helper</RepositoryUrl>
+    <Description>Collection of helper functions for interacting with the AWS SQS service</Description>
+    <RepositoryType>github</RepositoryType>
+    <PackageId>NetStandardAWSSQSHelper</PackageId>
+    <Product>NetStandardAWSSQSHelper</Product>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>documentation.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AWSSDK.SQS" Version="3.5.0" />
+    <PackageReference Include="NetStandardLogger" Version="2.0.1" />
+  </ItemGroup>
+
+</Project>
