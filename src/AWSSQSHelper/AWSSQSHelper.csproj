@@ -11,7 +11,7 @@
     <RepositoryType>github</RepositoryType>
     <PackageId>NetStandardAWSSQSHelper</PackageId>
     <Product>NetStandardAWSSQSHelper</Product>
-    <PackageTags>AWS;SQS;Helper;NetStandard</PackageTags>
+    <PackageTags>aws;sqs;helper;netStandard</PackageTags>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
