@@ -19,7 +19,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AWSSDK.SQS" Version="3.5.0.41" />
+    <PackageReference Include="AWSSDK.SQS" Version="3.5.0.46" />
     <PackageReference Include="NetStandardLogger" Version="2.0.4" />
   </ItemGroup>
 
