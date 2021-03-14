@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace AWSSQSHelper
@@ -26,6 +27,11 @@ namespace AWSSQSHelper
         private AmazonSQSClient Repository { get; }
 
         /// <summary>
+        /// Cancellation Token
+        /// </summary>
+        private CancellationTokenSource CancellationToken { get; }
+
+        /// <summary>
         /// Creates a new instance of <see cref="SQSHelper"/>
         /// </summary>
         /// <param name="logger">ILogger</param>
@@ -41,6 +47,8 @@ namespace AWSSQSHelper
             if (options == null) options = new AmazonSQSConfig { RegionEndpoint = RegionEndpoint.USEast1 };
 
             this.Repository = repository ?? new AmazonSQSClient(config: options);
+
+            this.CancellationToken = new CancellationTokenSource();
         }
 
         #region IDisposable
@@ -60,6 +68,16 @@ namespace AWSSQSHelper
             {
                 if (disposing)
                 {
+                    try
+                    {
+                        this.CancellationToken?.Cancel();
+                    }
+                    catch (ObjectDisposedException)
+                    {
+                    }
+
+                    this.CancellationToken?.Dispose();
+
                     this.Repository?.Dispose();
 
                     this.Logger?.Dispose();
@@ -89,7 +107,8 @@ namespace AWSSQSHelper
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
         public async Task<CreateQueueResponse> CreateQueueAsync(string queueName,
-            Dictionary<string, string> attributes = null)
+            Dictionary<string, string> attributes = null,
+            CancellationToken cancellationToken = default)
         {
             this.Logger.LogDebug($"[{nameof(this.CreateQueueAsync)}]");
 
@@ -105,7 +124,8 @@ namespace AWSSQSHelper
 
             this.Logger.LogTrace(JsonConvert.SerializeObject(value: request));
 
-            var response = await this.Repository.CreateQueueAsync(request: request);
+            var response = await this.Repository.CreateQueueAsync(request: request,
+                cancellationToken: cancellationToken == default ? this.CancellationToken.Token : cancellationToken);
 
             this.Logger.LogTrace(JsonConvert.SerializeObject(value: response));
 
@@ -113,7 +133,8 @@ namespace AWSSQSHelper
         }
 
         public async Task<DeleteMessageResponse> DeleteMessageAsync(string queueUrl,
-            string receiptHandle)
+            string receiptHandle,
+            CancellationToken cancellationToken = default)
         {
             this.Logger.LogDebug($"[{nameof(this.DeleteMessageAsync)}]");
 
@@ -130,7 +151,8 @@ namespace AWSSQSHelper
 
             this.Logger.LogTrace(JsonConvert.SerializeObject(value: request));
 
-            var response = await this.Repository.DeleteMessageAsync(request: request);
+            var response = await this.Repository.DeleteMessageAsync(request: request,
+                cancellationToken: cancellationToken == default ? this.CancellationToken.Token : cancellationToken);
 
             this.Logger.LogTrace(JsonConvert.SerializeObject(value: response));
 
@@ -138,7 +160,8 @@ namespace AWSSQSHelper
         }
 
         public async Task<DeleteMessageBatchResponse> DeleteMessagesAsync(string queueUrl,
-            IEnumerable<string> receiptHandles)
+            IEnumerable<string> receiptHandles,
+            CancellationToken cancellationToken = default)
         {
             this.Logger.LogDebug($"[{nameof(this.DeleteMessagesAsync)}]");
 
@@ -156,14 +179,16 @@ namespace AWSSQSHelper
 
             this.Logger.LogTrace(JsonConvert.SerializeObject(value: request));
 
-            var response = await this.Repository.DeleteMessageBatchAsync(request: request);
+            var response = await this.Repository.DeleteMessageBatchAsync(request: request,
+                cancellationToken: cancellationToken == default ? this.CancellationToken.Token : cancellationToken);
 
             this.Logger.LogTrace(JsonConvert.SerializeObject(value: response));
 
             return response;
         }
 
-        public async Task<DeleteQueueResponse> DeleteQueueAsync(string queueUrl)
+        public async Task<DeleteQueueResponse> DeleteQueueAsync(string queueUrl,
+            CancellationToken cancellationToken = default)
         {
             this.Logger.LogDebug($"[{nameof(this.DeleteQueueAsync)}]");
 
@@ -178,14 +203,16 @@ namespace AWSSQSHelper
 
             this.Logger.LogTrace(JsonConvert.SerializeObject(value: request));
 
-            var response = await this.Repository.DeleteQueueAsync(request: request);
+            var response = await this.Repository.DeleteQueueAsync(request: request,
+                cancellationToken: cancellationToken == default ? this.CancellationToken.Token : cancellationToken);
 
             this.Logger.LogTrace(JsonConvert.SerializeObject(value: response));
 
             return response;
         }
 
-        public async Task<int> GetNumberOfMessagesOnQueueAsync(string queueUrl)
+        public async Task<int> GetNumberOfMessagesOnQueueAsync(string queueUrl,
+            CancellationToken cancellationToken = default)
         {
             this.Logger.LogDebug($"[{nameof(this.GetNumberOfMessagesOnQueueAsync)}]");
 
@@ -201,14 +228,16 @@ namespace AWSSQSHelper
 
             this.Logger.LogTrace(JsonConvert.SerializeObject(value: request));
 
-            var response = await this.Repository.GetQueueAttributesAsync(request: request);
+            var response = await this.Repository.GetQueueAttributesAsync(request: request,
+                cancellationToken: cancellationToken == default ? this.CancellationToken.Token : cancellationToken);
 
             this.Logger.LogTrace(JsonConvert.SerializeObject(value: response));
 
             return response.ApproximateNumberOfMessages;
         }
 
-        public async Task<GetQueueAttributesResponse> GetQueueAttributesAsync(string queueUrl)
+        public async Task<GetQueueAttributesResponse> GetQueueAttributesAsync(string queueUrl,
+            CancellationToken cancellationToken = default)
         {
             this.Logger.LogDebug($"[{nameof(this.GetQueueAttributesAsync)}]");
 
@@ -224,14 +253,16 @@ namespace AWSSQSHelper
 
             this.Logger.LogTrace(JsonConvert.SerializeObject(value: request));
 
-            var response = await this.Repository.GetQueueAttributesAsync(request: request);
+            var response = await this.Repository.GetQueueAttributesAsync(request: request,
+                cancellationToken: cancellationToken == default ? this.CancellationToken.Token : cancellationToken);
 
             this.Logger.LogTrace(JsonConvert.SerializeObject(value: response));
 
             return response;
         }
 
-        public async Task<PurgeQueueResponse> PurgeQueueAsync(string queueUrl)
+        public async Task<PurgeQueueResponse> PurgeQueueAsync(string queueUrl,
+            CancellationToken cancellationToken = default)
         {
             this.Logger.LogDebug($"[{nameof(this.PurgeQueueAsync)}]");
 
@@ -248,7 +279,8 @@ namespace AWSSQSHelper
 
             try
             {
-                var response = await this.Repository.PurgeQueueAsync(request: request);
+                var response = await this.Repository.PurgeQueueAsync(request: request,
+                cancellationToken: cancellationToken == default ? this.CancellationToken.Token : cancellationToken);
 
                 this.Logger.LogTrace(JsonConvert.SerializeObject(value: response));
 
@@ -265,7 +297,8 @@ namespace AWSSQSHelper
         public async Task<IEnumerable<Message>> ReceiveAllMessagesAsync(string queueUrl,
             int visibilityTimeout = 10,
             IEnumerable<string> attributeNames = null,
-            IEnumerable<string> messageAttributeNames = null)
+            IEnumerable<string> messageAttributeNames = null,
+            CancellationToken cancellationToken = default)
         {
             this.Logger.LogDebug($"[{nameof(this.ReceiveAllMessagesAsync)}]");
 
@@ -275,6 +308,10 @@ namespace AWSSQSHelper
 
             var messages = new List<Message>();
 
+            var localCancellationToken = cancellationToken == default ? this.CancellationToken.Token : cancellationToken;
+
+            var count = 0;
+
             do
             {
                 var currentMessages = await this.ReceiveMessagesAsync(queueUrl: queueUrl,
@@ -282,10 +319,10 @@ namespace AWSSQSHelper
                     attributeNames: attributeNames,
                     messageAttributeNames: messageAttributeNames);
 
-                if (currentMessages.Messages.Count < 1) break;
+                count = currentMessages.Messages.Count;
 
                 messages.AddRange(currentMessages.Messages);
-            } while (true);
+            } while (count > 0 && !localCancellationToken.IsCancellationRequested);
 
             return messages;
         }
@@ -294,7 +331,8 @@ namespace AWSSQSHelper
             int maxNumberOfMessages = 10,
             int visibilityTimeout = 10,
             IEnumerable<string> attributeNames = null,
-            IEnumerable<string> messageAttributeNames = null)
+            IEnumerable<string> messageAttributeNames = null,
+            CancellationToken cancellationToken = default)
         {
             this.Logger.LogDebug($"[{nameof(this.ReceiveMessagesAsync)}]");
 
@@ -313,7 +351,8 @@ namespace AWSSQSHelper
 
             this.Logger.LogTrace(JsonConvert.SerializeObject(value: request));
 
-            var response = await this.Repository.ReceiveMessageAsync(request: request);
+            var response = await this.Repository.ReceiveMessageAsync(request: request,
+                cancellationToken: cancellationToken == default ? this.CancellationToken.Token : cancellationToken);
 
             this.Logger.LogTrace(JsonConvert.SerializeObject(value: response));
 
@@ -323,7 +362,8 @@ namespace AWSSQSHelper
         public async Task<SendMessageResponse> SendMessageAsync(string queueUrl,
             string messageBody,
             int delaySeconds = 0,
-            Dictionary<string, MessageAttributeValue> messageAttributes = null)
+            Dictionary<string, MessageAttributeValue> messageAttributes = null,
+            CancellationToken cancellationToken = default)
         {
             this.Logger.LogDebug($"[{nameof(this.SendMessageAsync)}]");
 
@@ -342,7 +382,8 @@ namespace AWSSQSHelper
 
             this.Logger.LogTrace(JsonConvert.SerializeObject(value: request));
 
-            var response = await this.Repository.SendMessageAsync(request: request);
+            var response = await this.Repository.SendMessageAsync(request: request,
+                cancellationToken: cancellationToken == default ? this.CancellationToken.Token : cancellationToken);
 
             this.Logger.LogTrace(JsonConvert.SerializeObject(value: response));
 
@@ -350,7 +391,8 @@ namespace AWSSQSHelper
         }
 
         public async Task<SendMessageBatchResponse> SendMessagesAsync(string queueUrl,
-            IEnumerable<SendMessageBatchRequestEntry> messages)
+            IEnumerable<SendMessageBatchRequestEntry> messages,
+            CancellationToken cancellationToken = default)
         {
             this.Logger.LogDebug($"[{nameof(this.SendMessagesAsync)}]");
 
@@ -368,7 +410,8 @@ namespace AWSSQSHelper
 
             this.Logger.LogTrace(JsonConvert.SerializeObject(value: request));
 
-            var response = await this.Repository.SendMessageBatchAsync(request: request);
+            var response = await this.Repository.SendMessageBatchAsync(request: request,
+                cancellationToken: cancellationToken == default ? this.CancellationToken.Token : cancellationToken);
 
             this.Logger.LogTrace(JsonConvert.SerializeObject(value: response));
 

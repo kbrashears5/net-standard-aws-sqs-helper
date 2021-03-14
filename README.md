@@ -12,7 +12,10 @@
 [![nuget](https://img.shields.io/nuget/dt/NetStandardAWSSQSHelper)](https://img.shields.io/nuget/dt/NetStandardAWSSQSHelper)
 </div>
 
-# Usage
+## Usage
+
+### Default - running in Lambda in your own account
+
 ```c#
 var logger = new ConsoleLogger(logLevel: LogLevel.Information);
 
@@ -21,3 +24,25 @@ var helper = new SQSHelper(logger: logger);
 await helper.SendMessageAsync(queueUrl: "https://queue.aws.com",
     messageBody: "message");
 ```
+
+### Running in separate account or not in Lambda
+
+```c#
+var logger = new ConsoleLogger(logLevel: LogLevel.Information);
+
+var options = new AmazonSQSConfig()
+{
+    RegionEndpoint = RegionEndpoint.USEast1
+};
+
+var repository = new AmazonSQSClient(config: options);
+
+var helper = new SQSHelper(logger: logger);
+
+await helper.SendMessageAsync(queueUrl: "https://queue.aws.com",
+    messageBody: "message");
+```
+
+## Notes
+
+If no options are supplied, will default to `us-east-1` as the region

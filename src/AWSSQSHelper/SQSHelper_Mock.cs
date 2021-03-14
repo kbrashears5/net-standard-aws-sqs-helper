@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace AWSSQSHelper
@@ -55,7 +56,8 @@ namespace AWSSQSHelper
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
         public Task<CreateQueueResponse> CreateQueueAsync(string queueName,
-            Dictionary<string, string> attributes)
+            Dictionary<string, string> attributes,
+            CancellationToken cancellationToken = default)
         {
             return Task.FromResult(new CreateQueueResponse()
             {
@@ -64,7 +66,8 @@ namespace AWSSQSHelper
         }
 
         public Task<DeleteMessageResponse> DeleteMessageAsync(string queueUrl,
-            string receiptHandle)
+            string receiptHandle,
+            CancellationToken cancellationToken = default)
         {
             return Task.FromResult(new DeleteMessageResponse()
             {
@@ -73,7 +76,8 @@ namespace AWSSQSHelper
         }
 
         public Task<DeleteMessageBatchResponse> DeleteMessagesAsync(string queueUrl,
-            IEnumerable<string> receiptHandles)
+            IEnumerable<string> receiptHandles,
+            CancellationToken cancellationToken = default)
         {
             return Task.FromResult(new DeleteMessageBatchResponse()
             {
@@ -81,7 +85,8 @@ namespace AWSSQSHelper
             });
         }
 
-        public Task<DeleteQueueResponse> DeleteQueueAsync(string queueUrl)
+        public Task<DeleteQueueResponse> DeleteQueueAsync(string queueUrl,
+            CancellationToken cancellationToken = default)
         {
             return Task.FromResult(new DeleteQueueResponse()
             {
@@ -89,12 +94,14 @@ namespace AWSSQSHelper
             });
         }
 
-        public Task<int> GetNumberOfMessagesOnQueueAsync(string queueUrl)
+        public Task<int> GetNumberOfMessagesOnQueueAsync(string queueUrl,
+            CancellationToken cancellationToken = default)
         {
             return Task.FromResult(7);
         }
 
-        public Task<GetQueueAttributesResponse> GetQueueAttributesAsync(string queueUrl)
+        public Task<GetQueueAttributesResponse> GetQueueAttributesAsync(string queueUrl,
+            CancellationToken cancellationToken = default)
         {
             return Task.FromResult(new GetQueueAttributesResponse()
             {
@@ -102,7 +109,8 @@ namespace AWSSQSHelper
             });
         }
 
-        public Task<PurgeQueueResponse> PurgeQueueAsync(string queueUrl)
+        public Task<PurgeQueueResponse> PurgeQueueAsync(string queueUrl,
+            CancellationToken cancellationToken = default)
         {
             return Task.FromResult(new PurgeQueueResponse()
             {
@@ -113,7 +121,8 @@ namespace AWSSQSHelper
         public Task<IEnumerable<Message>> ReceiveAllMessagesAsync(string queueUrl,
             int visibilityTimeout = 10,
             IEnumerable<string> attributeNames = null,
-            IEnumerable<string> messageAttributeNames = null)
+            IEnumerable<string> messageAttributeNames = null,
+            CancellationToken cancellationToken = default)
         {
             return Task.FromResult(new List<Message>() { new Message() }.AsEnumerable());
         }
@@ -122,7 +131,8 @@ namespace AWSSQSHelper
             int maxNumberOfMessages = 10,
             int visibilityTimeout = 10,
             IEnumerable<string> attributeNames = null,
-            IEnumerable<string> messageAttributeNames = null)
+            IEnumerable<string> messageAttributeNames = null,
+            CancellationToken cancellationToken = default)
         {
             return Task.FromResult(new ReceiveMessageResponse()
             {
@@ -133,7 +143,8 @@ namespace AWSSQSHelper
         public Task<SendMessageResponse> SendMessageAsync(string queueUrl,
             string messageBody,
             int delaySeconds = 0,
-            Dictionary<string, MessageAttributeValue> messageAttributes = null)
+            Dictionary<string, MessageAttributeValue> messageAttributes = null,
+            CancellationToken cancellationToken = default)
         {
             return Task.FromResult(new SendMessageResponse()
             {
@@ -142,7 +153,8 @@ namespace AWSSQSHelper
         }
 
         public Task<SendMessageBatchResponse> SendMessagesAsync(string queueUrl,
-            IEnumerable<SendMessageBatchRequestEntry> messages)
+            IEnumerable<SendMessageBatchRequestEntry> messages,
+            CancellationToken cancellationToken = default)
         {
             return Task.FromResult(new SendMessageBatchResponse()
             {
